@@ -51,6 +51,7 @@ import re
 import geopandas as gpd
 import json
 import us
+import altair_saver as alt_saver
 
 import warnings 
 warnings.filterwarnings('ignore')
@@ -61,12 +62,6 @@ alt.renderers.enable("png")
 ## Step 1: Develop initial scraper and crawler
 
 ### 1. Scraping (PARTNER 1)
-
-Go to the first page of the HHS OIG’s “Enforcement Actions” page and scrape and collect the following into a dataset:
-• Title of the enforcement action
-• Date
-• Category (e.g, “Criminal and Civil Actions”) • Link associated with the enforcement action
-Collect your output into a tidy dataframe and print its head.
 
 ```{python, eval=false}
 # Function to scrape a single page
@@ -122,10 +117,8 @@ df.to_csv('scraped_data.csv', index=False)
 
 ```
 
-  
 ### 2. Crawling (PARTNER 1)
-Crawling: Then for each enforcement action, click the link and collect the name of the agency involved (e.g., for this link, it would be U.S. Attorney’s Oﬀice, Eastern District of Washington).
-Update your dataframe with the name of the agency and print its head.
+
 ```{python, eval=false}
 import logging
 # Set up logging configuration
@@ -228,6 +221,7 @@ print(data_2023.tail(1))
 In this dataframe, 1534 enforcement were collected. The earliest enforcement acquired was Podiatrist Pays $90,000 To Settle False Billing Allegations on Jan 3, 2023.
 
 * c. Test Partner's Code (PARTNER 1)
+
 ```{python, eval=false}
 data_2021 = scrape_from(1, 2021)
 print(len(data_2021))
@@ -235,6 +229,7 @@ print(data_2021.tail(1))
 ```
 
 In this dataframe, 3022 enforcement were collected. The earliest enforcement acquired was The United States And Tennessee Resolve Claims With Three Providers For False Claims Act Liability Relating To ‘P-Stim’ Devices For A Total Of $1.72 Million on Jan 4, 2021.
+
 
 ## Step 3: Plot data based on scraped data
 
@@ -412,7 +407,12 @@ states_chart = alt.Chart(alt.topo_feature(us_states_url, 'states')).mark_geoshap
     title='Number of Enforcement Actions by State'
 )
 
-states_chart
+# states_chart.save('/Users/zhaozijing/Documents/GitHub/problem-set-5-zac-tina/state_chart.png')
+
+alt_saver.save(states_chart, '/Users/zhaozijing/Documents/GitHub/problem-set-5-zac-tina/state_chart.png')
+
+![Number of Enforcement Actions Over Time (Monthly Aggregated)](/Users/zhaozijing/Documents/GitHub/problem-set-5-zac-tina/state_chart.png)
+
 
 ```
 
@@ -455,9 +455,10 @@ alt_chart = alt.Chart(alt.Data(values=geojson_data['features'])).mark_geoshape()
     title='Number of Enforcement Actions by U.S. Attorney District'
 )
 
-alt_chart
+alt_saver.save(alt_chart, '/Users/zhaozijing/Documents/GitHub/problem-set-5-zac-tina/district_chart.png')
 
 
+![Number of Enforcement Actions by U.S. Attorney District](/Users/zhaozijing/Documents/GitHub/problem-set-5-zac-tina/district_chart.png)
 ```
 
 
