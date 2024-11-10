@@ -1,7 +1,7 @@
 ---
-title: "title"
-author: "author"
-date: "date"
+title: "Problem Set 5"
+author: "Zijing Zhao, Zac Shen"
+date: "11/5/2024"
 format: 
   pdf:
     include-in-header: 
@@ -18,7 +18,7 @@ include-before-body:
     }
 execute:
   echo: true
-  eval: false
+  eval: true
 ---
 
 **Due 11/9 at 5:00PM Central. Worth 100 points + 10 points extra credit.**
@@ -26,10 +26,10 @@ execute:
 ## Submission Steps (10 pts)
 1. This problem set is a paired problem set.
 2. Play paper, scissors, rock to determine who goes first. Call that person *Partner 1*.
-    - Partner 1 (name and cnet ID):
-    - Partner 2 (name and cnet ID):
+    - Partner 1: Zijing Zhao, zijingz
+    - Partner 2: Zekai Shen, (写一下你的cnet id)
 3. Partner 1 will accept the `ps5` and then share the link it creates with their partner. You can only share it with one partner so you will not be able to change it after your partner has accepted. 
-4. "This submission is our work alone and complies with the 30538 integrity policy." Add your initials to indicate your agreement: \*\*\_\_\*\* \*\*\_\_\*\*
+4. "This submission is our work alone and complies with the 30538 integrity policy." Add your initials to indicate your agreement: Zijing Zhao, Zekai Shen
 5. "I have uploaded the names of anyone else other than my partner and I worked with on the problem set **[here](https://docs.google.com/forms/d/185usrCREQaUbvAXpWhChkjghdGgmAZXA3lPWpXLLsts/edit)**"  (1 point)
 6. Late coins used this pset: \*\*\_\_\*\* Late coins left after submission: \*\*\_\_\*\*
 7. Knit your `ps5.qmd` to an PDF file to make `ps5.pdf`, 
@@ -40,27 +40,32 @@ execute:
 
 \newpage
 
-```{python, eval=true}
+```{python}
 import pandas as pd
 import altair as alt
 import time
 import requests
 from bs4 import BeautifulSoup
 import csv
+import re
+import geopandas as gpd
+import json
+import us
+import altair_saver as alt_saver
 
 import warnings 
 warnings.filterwarnings('ignore')
 alt.renderers.enable("png")
 ```
 
+\newpage
 
 ## Step 1: Develop initial scraper and crawler
 
 ### 1. Scraping (PARTNER 1)
 
 ```{python}
-# Function to scrape a single page
-
+#| eval: false
 def scrape_page(page_number):
   base_url = "https://oig.hhs.gov/fraud/enforcement/?page="
   url = base_url + str(page_number)
@@ -109,12 +114,17 @@ print(df.head())
 
 # Save the DataFrame to a CSV file
 df.to_csv('scraped_data.csv', index=False)
+```
 
+```{python}
+df = pd.read_csv('scraped_data.csv')
+print(df.head())
 ```
 
 ### 2. Crawling (PARTNER 1)
 
 ```{python}
+#| eval: false
 import logging
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -145,6 +155,13 @@ df.to_csv('scraped_data_2.csv', index=False)
 print(df.head())
 ```
 
+```{python}
+df = pd.read_csv('scraped_data_2.csv')
+print(df.head())
+```
+
+
+
 ## Step 2: Making the scraper dynamic
 
 ### 1. Turning the scraper into a function 
@@ -164,11 +181,10 @@ def scrape_from(month,year):
     return ('please enter a date after Jan 1 2013')
   
 
-  
-
 * b. Create Dynamic Scraper (PARTNER 2)
 
-```{python, eval：false}
+```{python}
+#| eval: false
 # Function to scrape data from a given month and year
 from datetime import datetime
 
@@ -219,7 +235,8 @@ In this dataframe, 1534 enforcement were collected. The earliest enforcement acq
 
 * c. Test Partner's Code (PARTNER 1)
 
-```{python, eval：false}
+```{python}
+#| eval: false
 data_2021 = scrape_from(1, 2021)
 print(len(data_2021))
 print(data_2021.tail(1))
@@ -227,14 +244,17 @@ print(data_2021.tail(1))
 
 In this dataframe, 3022 enforcement were collected. The earliest enforcement acquired was The United States And Tennessee Resolve Claims With Three Providers For False Claims Act Liability Relating To ‘P-Stim’ Devices For A Total Of $1.72 Million on Jan 4, 2021.
 
+\newpage
 
 ## Step 3: Plot data based on scraped data
 
 ### 1. Plot the number of enforcement actions over time (PARTNER 2)
+Plot a line chart that shows: the number of enforcement actions over time (aggregated to each month+year) overall since January 2021
 
 ```{python}
 
 ```
+
 
 ### 2. Plot the number of enforcement actions categorized: (PARTNER 1)
 
@@ -246,26 +266,33 @@ In this dataframe, 3022 enforcement were collected. The earliest enforcement acq
 
 * based on five topics
 
-```{python}
+```{python, eval=true}
 
 ```
 
 ## Step 4: Create maps of enforcement activity
+For these questions, use this US Attorney District shapefile (link) and a Census state shapefile (link)
 
 ### 1. Map by State (PARTNER 1)
-
+(Partner 1) Map by state: Among actions taken by state-level agencies, clean the state names you collected and plot a choropleth of the number of enforcement actions for each state. Hint: look for “State of” in the agency info!
 ```{python}
+
 
 ```
 
 
 ### 2. Map by District (PARTNER 2)
+Map by district: Among actions taken by US Attorney District-level agencies, clean the district names so that you can merge them with the shapefile, and then plot a choropleth of the number of enforcement actions in each US Attorney District. Hint: look for “District” in the agency info.
 
 ```{python}
 
 ```
 
+
 ## Extra Credit
+1. Use the zip code shapefile from the previous problem set and merge it with zip code-level population data. (Go to Census Data Portal, select “ZIP Code Tabulation Area”, check “All 5-digit ZIP Code Tabulation Areas within United States”, and select “2020: DEC Demographic and Housing Characteristics”. Download the csv.).
+2. Conduct a spatial join between zip code shapefile and the district shapefile, then aggregate to get population in each district.
+3. Map the ratio of enforcement actions in each US Attorney District. You can calculate the ratio by aggregating the number of enforcement actions since January 2021 per district, and dividing it with the population data.
 
 ### 1. Merge zip code shapefile with population
 ```{python}
