@@ -16,8 +16,8 @@ include-before-body:
       breaksymbolleft={},
       breaklines
     }
-output:
-  echo: false
+execute:
+  echo: true
   eval: false
 ---
 
@@ -40,7 +40,7 @@ output:
 
 \newpage
 
-```{python}
+```{python, eval=true}
 import pandas as pd
 import altair as alt
 import time
@@ -63,7 +63,8 @@ alt.renderers.enable("png")
 
 ### 1. Scraping (PARTNER 1)
 
-```{python, eval=false}
+```{python}
+
 # Function to scrape a single page
 
 def scrape_page(page_number):
@@ -119,12 +120,15 @@ df.to_csv('scraped_data.csv', index=False)
 
 ### 2. Crawling (PARTNER 1)
 
-```{python, eval=false}
+
+```{python}
+
 import logging
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 df = pd.read_csv('scraped_data.csv')
+
 
 def scrape_agency(link):
   response = requests.get(link)
@@ -168,6 +172,7 @@ def scrape_from(month,year):
   except:
     return ('please enter a date after Jan 1 2013')
   
+
 
 * b. Create Dynamic Scraper (PARTNER 2)
 
@@ -221,6 +226,7 @@ print(data_2023.tail(1))
 In this dataframe, 1534 enforcement were collected. The earliest enforcement acquired was Podiatrist Pays $90,000 To Settle False Billing Allegations on Jan 3, 2023.
 
 * c. Test Partner's Code (PARTNER 1)
+
 
 ```{python, eval=false}
 data_2021 = scrape_from(1, 2021)
